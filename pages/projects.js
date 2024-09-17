@@ -1,7 +1,7 @@
 import { useLocale } from "@/lib/locale";
 import Container from "@/components/Container";
 
-export default function Page404() {
+export default function Projects() {
 	const locale = useLocale();
 
 	return (
