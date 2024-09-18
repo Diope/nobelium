@@ -5,7 +5,7 @@ export default function search ({ tags, posts }) {
   return <SearchLayout tags={tags} posts={posts} />
 }
 export async function getStaticProps () {
-  const posts = await getAllBlogPosts({ includePages: false })
+  const posts = await getAllBlogPosts({ includePages: true })
   const tags = getAllTagsFromPosts(posts)
   return {
     props: {
