@@ -1,17 +1,36 @@
-import { useLocale } from "@/lib/locale";
-import Container from "@/components/Container";
+import { clientConfig } from '@/lib/server/config'
 
-export default function Projects() {
-	const locale = useLocale();
+import Container from '@/components/Container'
+import BlogPost from '@/components/BlogPost'
+import Pagination from '@/components/Pagination'
+import { getAllProjectPosts } from '@/lib/notion'
+import { useConfig } from '@/lib/config'
+import ProjectPost from "@/components/ProjectPost";
 
-	return (
-		<Container>
-			<h1 className="text-5xl text-black dark:text-white text-center">
-				PROJECTS LIVE HERE
-			</h1>
-			<p className="text-xl text-gray-600 dark:text-gray-300 text-center">
-				{locale.PAGE.ERROR_404.MESSAGE}
-			</p>
-		</Container>
-	);
+export async function getStaticProps () {
+  const posts = await getAllProjectPosts({ includePages: false })
+  const postsToShow = posts.slice(0, clientConfig.postsPerPage)
+  const totalPosts = posts.length
+  const showNext = totalPosts > clientConfig.postsPerPage
+  return {
+    props: {
+      page: 1, // current page is 1
+      postsToShow,
+      showNext
+    },
+    revalidate: 1
+  }
+}
+
+export default function Project ({ postsToShow, page, showNext }) {
+  const { title, description } = useConfig()
+
+  return (
+    <Container title={title} description={description}>
+      {postsToShow.map(post => (
+        <ProjectPost key={post.id} post={post} />
+      ))}
+      {showNext && <Pagination page={page} showNext={showNext} />}
+    </Container>
+  )
 }
